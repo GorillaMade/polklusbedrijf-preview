@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Pol Klusbedrijf favicon</title>
+  <rect width="128" height="128" rx="22" fill="#102A43"/>
+  <g transform="translate(14 14) scale(.78)">
+    <path fill="#FFFFFF" d="M12 54 64 12l52 42v43l-15 13H61V91h33l4-4V63L64 36 12 78Z"/>
+    <path fill="#F47B20" d="M12 88 64 46l19 15-53 41v20H12Z"/>
+  </g>
+</svg>

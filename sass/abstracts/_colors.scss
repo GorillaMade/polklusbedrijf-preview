@@ -1,0 +1,10 @@
+// Pol Klusbedrijf — oranje accent en blauw als neutrale basis.
+$colors: (
+  neutral: (100: #ffffff, 200: #f1f5f8, 300: #dce5ed, 400: #a8b9c8, 500: #7890a5, 600: #526d84, 700: #35516b, 800: #193b57, 900: #102a43),
+  brand: (100: #fff2e8, 200: #ffdbc1, 300: #ffc08e, 400: #ff9c51, 500: #f47b20, 600: #df6511, 700: #b84d0c, 800: #883908, 900: #5a2507),
+  success: (100: #e8f7ee, 500: #20824b, 700: #155e36),
+  warning: (100: #fff3d5, 500: #ae6b0b, 700: #754709),
+  danger: (100: #ffebea, 500: #c93636, 700: #922525),
+  info: (100: #e8f4ff, 500: #2676c5, 700: #1b5087)
+);
+$brand-text: #102a43;
