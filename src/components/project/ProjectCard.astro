@@ -1,0 +1,38 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Img from '@/components/media/Img.astro';
+import Heading from '@/components/typography/Heading.astro';
+import Paragraph from '@/components/typography/Paragraph.astro';
+import Eyebrow from '@/components/typography/Eyebrow.astro';
+interface Props { project: CollectionEntry<'projecten'>; index?: number; }
+const { project, index = 0 } = Astro.props;
+---
+<a class="project-card" href={`/projects/${project.id}`}>
+  <div class="project-card__image">
+    <Img src={project.data.cover} alt={`${project.data.concept ? 'Sfeerbeeld bij' : 'Projectfoto van'} ${project.data.title}`} loading="lazy" />
+    <span>{String(index + 1).padStart(2, '0')}</span>
+  </div>
+  <div class="project-card__meta">
+      <Eyebrow variant="tag">{project.data.category}</Eyebrow>
+      <span aria-hidden="true">↗</span>
+  </div>
+  <Heading tag="h3">{project.data.title}</Heading>
+  <Paragraph>{project.data.summary}</Paragraph>
+</a>
+
+
+<style is:global lang="scss">
+/* Stijlen verplaatst vanuit sass/pol.scss; bestaande selectors behouden. */
+.project-card__image { position:relative; overflow:hidden; aspect-ratio:4/4.4; background:#dce5ed; }
+.project-card__image img { width:100%; height:100%; object-fit:cover; transition:transform .5s; }
+.project-card:hover img { transform:scale(1.04); }
+.project-card__image span { position:absolute; top:1rem; left:1rem; background:white; padding:.5rem .7rem; font-size:.75rem; font-weight:850; }
+.project-card__meta { display:flex; justify-content:space-between; margin-top:1.3rem; color:#b84d0c; font-size:.7rem; font-weight:850; letter-spacing:.12em; }
+.project-card__meta span:last-child { font-size:1.5rem; }
+.project-card h3 { margin:.4rem 0 .5rem; font-size:1.65rem; letter-spacing:-.04em; }
+.project-card p:not(.eyebrow-text) { margin:0; color:#526d84; line-height:1.6; }
+@media (max-width: 640px) {
+  .project-card__image { aspect-ratio:4/3.6; }
+}
+.project-card:focus-visible { outline:3px solid #f47b20; outline-offset:5px; }
+</style>

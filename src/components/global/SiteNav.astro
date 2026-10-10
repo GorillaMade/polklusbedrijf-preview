@@ -1,0 +1,181 @@
+
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = HTMLAttributes<'nav'> & {
+  render?: boolean;
+  label?: string;
+};
+
+const {
+  render = true,
+  label = 'Hoofdnavigatie',
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+{render && (
+  <nav
+    {...rest}
+    class:list={['site-nav', className]}
+    aria-label={label}
+    x-data={`{
+      activePath: '/',
+      activeHash: '',
+      scrollFrame: null,
+
+      init() {
+        this.updateActive();
+
+        this.$nextTick(() => {
+          this.updateVisibleSection();
+        });
+      },
+
+      normalize(path) {
+        return path.replace(/\\/+$/, '') || '/';
+      },
+
+      updateActive() {
+        this.activePath = window.location.pathname;
+        this.activeHash = window.location.hash;
+
+        this.$nextTick(() => this.updateVisibleSection());
+      },
+
+      getSections() {
+        const links = Array.from(
+          this.$el.querySelectorAll('a[href]')
+        );
+
+        const ids = links.flatMap(link => {
+          const url = new URL(link.href, window.location.origin);
+          const sections = [];
+
+          if (
+            this.normalize(url.pathname) === '/' &&
+            url.hash
+          ) {
+            sections.push(
+              decodeURIComponent(url.hash.slice(1))
+            );
+          }
+
+          if (link.dataset.activeSection) {
+            sections.push(link.dataset.activeSection);
+          }
+
+          return sections;
+        });
+
+        return [...new Set(ids)]
+          .map(id => document.getElementById(id))
+          .filter(Boolean);
+      },
+
+      updateVisibleSection() {
+        if (this.normalize(window.location.pathname) !== '/') {
+          return;
+        }
+
+        const sections = this.getSections();
+        const marker = window.innerHeight * 0.35;
+
+        // Determine the section that currently contains
+        // the viewport marker.
+        const visible = sections.find(section => {
+          const rect = section.getBoundingClientRect();
+
+          return (
+            rect.top <= marker &&
+            rect.bottom > marker
+          );
+        });
+
+        if (visible) {
+          this.activeHash = '#' + visible.id;
+          return;
+        }
+
+        // Between sections, use the last section passed.
+        const passed = sections
+          .filter(section =>
+            section.getBoundingClientRect().top <= marker
+          )
+          .sort((a, b) =>
+            b.getBoundingClientRect().top -
+            a.getBoundingClientRect().top
+          );
+
+        this.activeHash = passed.length
+          ? '#' + passed[0].id
+          : '';
+      },
+
+      onScroll() {
+        if (this.scrollFrame !== null) return;
+
+        this.scrollFrame = requestAnimationFrame(() => {
+          this.scrollFrame = null;
+          this.updateVisibleSection();
+        });
+      },
+
+      isActive(href, activeSection = null) {
+        const url = new URL(href, window.location.origin);
+
+        const targetPath = this.normalize(url.pathname);
+        const currentPath = this.normalize(this.activePath);
+
+        // Homepage section associated with a regular page.
+        // Example: /projecten + #projecten.
+        if (currentPath === '/' && activeSection) {
+          return this.activeHash === '#' + activeSection;
+        }
+
+        // Regular homepage anchor.
+        if (url.hash) {
+          return (
+            currentPath === targetPath &&
+            this.activeHash === url.hash
+          );
+        }
+
+        // Home is only active above the first tracked section.
+        if (targetPath === '/') {
+          return currentPath === '/' && !this.activeHash;
+        }
+
+        // Normal page and all its child routes.
+        return (
+          currentPath === targetPath ||
+          currentPath.startsWith(targetPath + '/')
+        );
+      },
+
+      destroy() {
+        if (this.scrollFrame !== null) {
+          cancelAnimationFrame(this.scrollFrame);
+        }
+      }
+    }`}
+    @scroll.window="onScroll()"
+    @resize.window="onScroll()"
+    @hashchange.window="updateActive()"
+    @popstate.window="updateActive()"
+    @pageshow.window="updateActive()"
+  >
+    <slot />
+  </nav>
+)}
+
+<style lang="scss">
+  .site-nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-m);
+    min-width: 0;
+  }
+</style>

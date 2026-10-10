@@ -1,0 +1,10 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/wrapper/Section.astro';
+import ContentWrapper from '@/components/wrapper/ContentWrapper.astro';
+import Eyebrow from '@/components/typography/Eyebrow.astro';
+import Heading from '@/components/typography/Heading.astro';
+import Paragraph from '@/components/typography/Paragraph.astro';
+import Button from '@/components/Button.astro';
+---
+<BaseLayout title="Bedankt voor uw aanvraag | Pol Klusbedrijf" noindex={true}><Section class="simple-page"><ContentWrapper class="site-container"><Eyebrow>BEDANKT</Eyebrow><Heading tag="h1" class="display-heading">Uw aanvraag<br/><em>is onderweg.</em></Heading><Paragraph>Bedankt voor uw interesse in Pol Klusbedrijf. Als het formulier succesvol is verwerkt door onze formulierdienst, nemen we uw aanvraag in behandeling.</Paragraph><Button href="/" class="pol-button">Terug naar home <span>↗</span></Button></ContentWrapper></Section></BaseLayout>

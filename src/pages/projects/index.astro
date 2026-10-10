@@ -1,0 +1,85 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/wrapper/Section.astro';
+import ContentWrapper from '@/components/wrapper/ContentWrapper.astro';
+import Grid from '@/components/wrapper/Grid.astro';
+import Heading from '@/components/typography/Heading.astro';
+import Paragraph from '@/components/typography/Paragraph.astro';
+import Eyebrow from '@/components/typography/Eyebrow.astro';
+import Button from '@/components/Button.astro';
+import ProjectCard from '@/components/project/ProjectCard.astro';
+const projects = (await getCollection('projecten')).sort((a,b) => a.data.order - b.data.order);
+---
+<BaseLayout title="Projecten | Pol Klusbedrijf" description="Bekijk projectinspiratie voor timmerwerk, renovatie en maatwerk bij Pol Klusbedrijf in Waalwijk en omgeving.">
+  <Section class="project-page-hero" space="small" theme="dark">
+    <ContentWrapper class="site-container">
+      <Eyebrow>ONS WERK</Eyebrow>
+      <Heading tag="h1" variant='display' class="display-heading">Met aandacht<br /><em>gemaakt.</em></Heading>
+      <Paragraph>Van een praktische verbetering tot maatwerk dat een ruimte compleet verandert. Ontdek de mogelijkheden.</Paragraph>{projects.some(p => p.data.concept) && <span class="project-disclaimer">Voorbeeldpresentaties met sfeerbeelden — echte projectfoto's volgen.</span>}
+    </ContentWrapper>
+  </Section>
+  <Section class="projects section-space">
+    <ContentWrapper class="site-container">
+      <div class="section-heading flow">
+        <div>
+          <Eyebrow>PROJECTOVERZICHT</Eyebrow>
+          <Heading tag="h2" variant="h1" class="display-heading">Ideeën voor<br /><em>uw volgende klus.</em></Heading>
+        </div>
+        <Paragraph>Een eerste indruk van onze werkwijze en de mogelijkheden voor uw woning.</Paragraph>
+      </div>
+      <Grid class="projects__grid" layout="thirds">{projects.map((project,i) =>
+        <ProjectCard project={project} index={i} />)}
+      </Grid>
+    </ContentWrapper>
+  </Section>
+  <Section class="quote-banner" theme="brand">
+    <ContentWrapper class="site-container quote-banner__inner">
+      <div class="flow">
+        <Eyebrow>KLAAR OM TE BEGINNEN?</Eyebrow>
+        <Heading tag="h2" variant="display" class="display-heading">Uw idee verdient<br /><em>goed vakwerk.</em></Heading>
+        <Paragraph>Groot plan of kleine klus? Vertel wat u voor ogen heeft.</Paragraph>
+        <Button href="/offerte" class="pol-button pol-button--navy">Vraag een offerte aan ↗</Button>
+      </div>
+    </ContentWrapper>
+  </Section>
+</BaseLayout>
+
+<style is:global lang="scss">
+    .projects .section-heading {
+        padding-block-end: var(--space-l);
+    }
+
+  /* Stijlen verplaatst vanuit sass/pol.scss; bestaande selectors behouden. */
+  .project-page-hero {
+    background: #102a43;
+    color: #fff;
+    padding-block: clamp(5rem, 10vw, 9rem);
+  }
+
+  .project-page-hero h1 {
+    font-size: clamp(3.8rem, 9vw, 9rem);
+    line-height: 1.02;
+    letter-spacing: -.075em;
+    margin: 1.2rem 0;
+  }
+
+  .project-page-hero h1 em {
+    color: #f47b20;
+    font-style: normal;
+  }
+
+  .project-page-hero p:not(.eyeline) {
+    color: #cbd7e0;
+    max-width: 43rem;
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    line-height: 1.6;
+  }
+
+  .project-disclaimer {
+    display: block;
+    margin-top: 2.5rem;
+    font-size: .78rem;
+    color: #aabecb;
+  }
+</style>

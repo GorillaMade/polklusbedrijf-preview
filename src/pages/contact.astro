@@ -1,0 +1,161 @@
+---
+import { business } from '@/data/business';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/wrapper/Section.astro';
+import ContentWrapper from '@/components/wrapper/ContentWrapper.astro';
+import Heading from '@/components/typography/Heading.astro';
+import Paragraph from '@/components/typography/Paragraph.astro';
+import Eyebrow from '@/components/typography/Eyebrow.astro';
+import Button from '@/components/Button.astro';
+import Form from '@/components/form/Form.astro';
+import Input from '@/components/form/Input.astro';
+import Textarea from '@/components/form/Textarea.astro';
+---
+
+<BaseLayout
+  title="Contact | Pol Klusbedrijf"
+  description="Heeft u een vraag aan Pol Klusbedrijf in Waalwijk? Neem contact op of vraag vrijblijvend een offerte aan."
+>
+  <Section class="contact-page" aria-labelledby="contact-title">
+    <ContentWrapper class="site-container">
+      <div class="contact-page__grid">
+          <aside class="contact-page__intro flow" data-theme="dark">
+          <Eyebrow>NEEM CONTACT OP</Eyebrow>
+          <Heading tag="h1" id="contact-title" class="display-heading">
+            Een vraag?<br />
+            <em>Stel 'm gerust.</em>
+          </Heading>
+          <Paragraph>
+            Wilt u iets weten over onze werkzaamheden of uw plannen bespreken?
+            Stuur ons een bericht. We denken graag met u mee.
+          </Paragraph>
+
+          <div class="contact-page__divider"></div>
+          <p class="contact-page__label">LIEVER EVEN BELLEN?</p>
+          <a class="contact-page__phone" href={business.phone.href}>
+            {business.phone.display}
+            <span aria-hidden="true">↗</span>
+          </a>
+          <Paragraph>
+            Bel ons gerust om uw vraag of plannen te bespreken.
+          </Paragraph>
+
+          <div class="contact-page__divider"></div>
+          <p class="contact-page__label">LIEVER DIRECT EEN OFFERTE?</p>
+          <Paragraph>
+            Heeft u al een concrete klus in gedachten? Via het offerteformulier
+            kunt u uw wensen, planning en eventuele foto's doorgeven.
+          </Paragraph>
+          <Button href="/offerte" class="pol-button">
+            Vraag een offerte aan <span aria-hidden="true">↗</span>
+          </Button>
+          <p class="contact-page__foot">POL KLUSBEDRIJF · WAALWIJK</p>
+        </aside>
+
+        <div class="contact-page__form-panel flow">
+          <Eyebrow>UW BERICHT</Eyebrow>
+          <Heading tag="h2">Waarmee kunnen we <em>helpen?</em></Heading>
+          <Paragraph class="contact-page__form-intro">
+            Vul het formulier in en vertel ons waar uw vraag over gaat.
+          </Paragraph>
+
+          <Form
+            class="contact-page__form"
+            name="contact"
+            method="POST"
+            action="/bedankt"
+            data-netlify="true"
+            netlify-honeypot="website"
+          >
+            <input type="hidden" name="form-name" value="contact" />
+            <p class="contact-page__honeypot" aria-hidden="true">
+              <label>Laat dit veld leeg <input name="website" tabindex="-1" autocomplete="off" /></label>
+            </p>
+            <div class="contact-page__fields">
+              <Input id="contact-naam" label="Naam" name="naam" autocomplete="name" required placeholder="Uw naam" />
+              <Input id="contact-email" label="E-mailadres" name="email" type="email" autocomplete="email" required placeholder="naam@voorbeeld.nl" />
+              <Input id="contact-telefoon" label="Telefoonnummer (optioneel)" name="telefoon" type="tel" autocomplete="tel" placeholder="06 1234 5678" />
+              <Input id="contact-onderwerp" label="Onderwerp" name="onderwerp" required placeholder="Waar gaat uw vraag over?" />
+            </div>
+            <Textarea id="contact-bericht" label="Uw bericht" name="bericht" rows="6" minlength="10" required placeholder="Vertel ons waarmee we u kunnen helpen..." />
+            <label class="contact-page__privacy">
+              <input type="checkbox" name="privacy_akkoord" value="ja" required />
+              <span>Ik ga akkoord met het gebruik van mijn gegevens voor het beantwoorden van mijn bericht. Lees de <a href="/privacy">privacyverklaring</a>.</span>
+            </label>
+            <Button type="submit" class="pol-button">
+              Verstuur bericht <span aria-hidden="true">↗</span>
+            </Button>
+          </Form>
+        </div>
+      </div>
+    </ContentWrapper>
+  </Section>
+</BaseLayout>
+
+<style lang="scss">
+  .contact-page {
+    background: #f3f6f8;
+    padding-block: clamp(3rem, 6vw, 6rem);
+
+    &__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(1.5rem, 4vw, 4rem);
+      align-items: start;
+    }
+
+    &__intro {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      background: #102a43;
+      color: #fff;
+      padding: clamp(2rem, 4vw, 4rem);
+      min-height: 570px;
+      box-sizing: border-box;
+
+      :global(h1) { color: #fff; margin: 1rem 0 1.5rem; line-height: 1.1; }
+      :global(h1 em) { color: #f47b20; }
+      :global(p) { color: #c5d1da; line-height: 1.75; }
+    }
+
+    &__divider { width: 100%; height: 1px; background: #35516b; margin: 2.5rem 0 1.5rem; }
+    &__label { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.13em; }
+    &__phone {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0.35rem 0 0.5rem;
+      color: #f47b20;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 700;
+      line-height: 1.3;
+      text-decoration: none;
+      overflow-wrap: anywhere;
+
+      &:hover { color: #ffad66; }
+      &:focus-visible { outline: 2px solid #f47b20; outline-offset: 4px; }
+      span { font-size: 1.2rem; }
+    }
+    &__foot { margin-top: auto; padding-top: 3rem; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.13em; color: #f47b20 !important; }
+    &__form-panel { background: #fff; padding: clamp(1.5rem, 4vw, 4rem); min-width: 0; }
+    &__form-panel :global(h2) { color: #102a43; margin: 0.75rem 0 1rem; }
+    &__form-panel :global(h2 em) { color: #e66b15; }
+    &__form-intro { margin-bottom: 2rem; color: #526d84; }
+    &__form { display: grid; gap: 1.4rem; }
+    &__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; }
+    &__privacy { display: flex; gap: 0.75rem; align-items: flex-start; color: #35516b; font-size: 0.85rem; line-height: 1.6; cursor: pointer; }
+    &__privacy input { margin-top: 0.3rem; accent-color: #f47b20; flex: none; }
+    &__privacy a { color: #b84d0c; text-underline-offset: 3px; }
+    &__honeypot { position: absolute; left: -9999px; }
+
+    @media (max-width: 900px) {
+      &__grid { grid-template-columns: 1fr; }
+      &__intro { min-height: 0; }
+      &__foot { padding-top: 2rem; }
+    }
+    @media (max-width: 600px) {
+      &__fields { grid-template-columns: 1fr; }
+    }
+  }
+</style>

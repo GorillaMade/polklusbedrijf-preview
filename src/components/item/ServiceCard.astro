@@ -1,0 +1,298 @@
+
+---
+import type { HTMLAttributes } from 'astro/types';
+
+import Heading from '@/components/typography/Heading.astro';
+import Paragraph from '@/components/typography/Paragraph.astro';
+import Button from '@/components/Button.astro';
+
+type Props = Omit<HTMLAttributes<'article'>, 'title'> & {
+  render?: boolean;
+  number: string | number;
+  category: string;
+  icon: string;
+  title: string;
+  description: string;
+  href: string;
+  linkLabel?: string;
+};
+
+const {
+  render = true,
+  number,
+  category,
+  icon,
+  title,
+  description,
+  href,
+  linkLabel = 'Bespreek deze klus',
+  class: className,
+  ...rest
+} = Astro.props;
+
+const formattedNumber = String(number).padStart(2, '0');
+---
+
+{render && (
+  <article
+    {...rest}
+    class:list={['service-card', className]}
+  >
+    <div class="service-card__top">
+      <span>{formattedNumber} / {category}</span>
+      <span class="service-card__arrow" aria-hidden="true">↗</span>
+    </div>
+
+    <span class="service-card__icon" aria-hidden="true">
+      {icon}
+    </span>
+
+    <Heading tag="h3" class="service-card__title">
+      {title}
+    </Heading>
+
+    <Paragraph class="service-card__description">
+      {description}
+    </Paragraph>
+
+    <div class="service-card__bottom">
+      <a
+        href={href}
+        class="service-card__link"
+      >
+        {linkLabel}
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </article>
+)}
+
+<style lang="scss">
+  .service-card {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+    min-height: 350px;
+    height: 100%;
+    box-sizing: border-box;
+
+    padding: 2rem;
+
+    background: #fff;
+    color: #102a43;
+
+    transition: background-color var(--duration-fast) ease;
+
+    // --------------------------------------------------
+    // Top
+    // --------------------------------------------------
+
+    &__top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+
+      color: #7890a5;
+      font-size: 0.65rem;
+      font-weight: 850;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    &__arrow {
+      color: #f47b20;
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    // --------------------------------------------------
+    // Icon
+    // --------------------------------------------------
+
+    &__icon {
+      display: block;
+
+      margin: 1.6rem 0 0.6rem;
+
+      color: #f47b20;
+      font-size: 3.5rem;
+      line-height: 1;
+    }
+
+    // --------------------------------------------------
+    // Content
+    // --------------------------------------------------
+
+    :global(.service-card__title) {
+      margin: 0 0 0.65rem;
+
+      color: #102a43;
+      font-size: 1.5rem;
+      letter-spacing: -0.04em;
+    }
+
+    :global(.service-card__description) {
+      margin: 0 0 2rem;
+
+      color: #526d84;
+      line-height: 1.65;
+    }
+
+    // --------------------------------------------------
+    // Bottom
+    // --------------------------------------------------
+
+    &__bottom {
+      margin-top: auto;
+      padding-top: 1.2rem;
+
+      border-top: 1px solid #dce5ed;
+    }
+
+    :global(.service-card__link) {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+
+      width: 100%;
+      min-height: 0;
+      padding: 0;
+      border: 0;
+
+      color: #b84d0c;
+      font-size: 0.65rem;
+      font-weight: 850;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    // --------------------------------------------------
+    // Hover
+    // --------------------------------------------------
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: #fff7f0;
+      }
+
+      :global(.service-card__link:hover) {
+        color: #102a43;
+      }
+    }
+
+    // --------------------------------------------------
+    // Responsive
+    // --------------------------------------------------
+
+    @media (max-width: 640px) {
+      padding: 1.5rem;
+      min-height: 310px;
+    }
+
+    // --------------------------------------------------
+    // Reduced motion
+    // --------------------------------------------------
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+</style>
+
+
+<style is:global lang="scss">
+  /* Stijlen verplaatst vanuit sass/pol.scss; bestaande selectors behouden. */
+  .service-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 350px;
+    padding: 2rem;
+    background: white;
+    color: #102a43;
+    text-decoration: none;
+    transition: background .2s;
+  }
+
+  .service-card:hover {
+    background: #fff7f0;
+  }
+
+  .service-card__top,
+  .service-card__bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+    font-size: .65rem;
+    font-weight: 850;
+    letter-spacing: .1em;
+  }
+
+  .service-card__top {
+    color: #7890a5;
+  }
+
+  .service-card__arrow {
+    font-size: 1.5rem;
+    color: #f47b20;
+  }
+
+  .service-card__icon {
+    display: block;
+    font-size: 3.5rem;
+    color: #f47b20;
+    margin: 1.6rem 0 .6rem;
+    line-height: 1;
+  }
+
+  .service-card h3 {
+    font-size: 1.5rem;
+    letter-spacing: -.04em;
+    margin: 0 0 .65rem;
+  }
+
+  .service-card p {
+    color: #526d84;
+    line-height: 1.65;
+    margin: 0 0 2rem;
+  }
+
+  .service-card__bottom {
+    margin-top: auto;
+    border-top: 1px solid #dce5ed;
+    padding-top: 1.2rem;
+    color: #b84d0c;
+  }
+
+  @media (max-width: 640px) {
+    .service-card {
+      min-height: 310px;
+    }
+  }
+
+  .service-card.card {
+    min-height: 350px;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .service-card.card .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: .8rem;
+    height: 100%;
+    padding: 2rem;
+  }
+
+  .service-card.card .card-actions {
+    margin-top: auto;
+  }
+
+  .service-card.card .card-actions .button {
+    color: #b84d0c;
+  }
+</style>

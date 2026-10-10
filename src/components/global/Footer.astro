@@ -1,0 +1,179 @@
+
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = HTMLAttributes<'footer'> & {
+  render?: boolean;
+  theme?: 'light' | 'dark' | 'brand';
+  copyright?: string;
+  year?: number;
+};
+
+const {
+  render = true,
+  theme,
+  copyright,
+  year = new Date().getFullYear(),
+  class: className,
+  ...rest
+} = Astro.props;
+
+const hasBottom =
+  Boolean(copyright) ||
+  Astro.slots.has('copyright') ||
+  Astro.slots.has('legal');
+---
+
+{render && (
+  <footer
+    {...rest}
+    data-theme={theme}
+    class:list={['site-footer', className]}
+  >
+    <div class="site-footer__inner">
+
+      <!-- Main -->
+      <div class="site-footer__main">
+        <div class="site-footer__brand">
+          <slot name="brand" />
+        </div>
+
+        <div class="site-footer__column">
+          <slot name="company" />
+        </div>
+
+        <div class="site-footer__column">
+          <slot name="services" />
+        </div>
+
+        <div class="site-footer__column">
+          <slot name="contact" />
+        </div>
+      </div>
+
+      <!-- Bottom -->
+      {hasBottom && (
+        <div class="site-footer__bottom">
+          <div class="site-footer__copyright">
+            <slot name="copyright">
+              {copyright && (
+                <small>
+                  © {year} {copyright}. Alle rechten voorbehouden.
+                </small>
+              )}
+            </slot>
+          </div>
+
+          <div class="site-footer__legal">
+            <slot name="legal" />
+          </div>
+        </div>
+      )}
+
+    </div>
+  </footer>
+)}
+
+<style lang="scss">
+  .site-footer {
+    // --------------------------------------------------
+    // Base
+    // --------------------------------------------------
+
+    width: 100%;
+    box-sizing: border-box;
+
+    background-color: var(--surface-page);
+    color: var(--text-primary);
+
+    border-block-start: 1px solid var(--border-default);
+
+    // --------------------------------------------------
+    // Inner
+    // --------------------------------------------------
+
+    &__inner {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-l);
+
+      width: 100%;
+      box-sizing: border-box;
+
+      padding-block: var(--space-l);
+      padding-inline: var(--gutter);
+    }
+
+    // --------------------------------------------------
+    // Main
+    // --------------------------------------------------
+
+    &__main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-l);
+    }
+
+    // --------------------------------------------------
+    // Columns
+    // --------------------------------------------------
+
+    &__brand,
+    &__column {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-s);
+
+      min-width: 0;
+    }
+
+    // --------------------------------------------------
+    // Bottom
+    // --------------------------------------------------
+
+    &__bottom {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-s);
+
+      padding-block-start: var(--space-m);
+
+      border-block-start: 1px solid var(--border-default);
+    }
+
+    &__copyright,
+    &__legal {
+      min-width: 0;
+    }
+
+    // --------------------------------------------------
+    // Tablet
+    // --------------------------------------------------
+
+    @media (width >= 640px) {
+      &__main {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+
+      &__bottom {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    // --------------------------------------------------
+    // Desktop
+    // --------------------------------------------------
+
+    @media (width >= 976px) {
+      &__main {
+        grid-template-columns:
+          minmax(0, 2fr)
+          repeat(3, minmax(0, 1fr));
+      }
+    }
+  }
+</style>

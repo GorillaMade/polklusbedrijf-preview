@@ -1,0 +1,5 @@
+---
+interface Props { class?: string; render?: boolean }
+const {class:className,render=true}=Astro.props;
+---
+{render && <p class={className}><slot /></p>}

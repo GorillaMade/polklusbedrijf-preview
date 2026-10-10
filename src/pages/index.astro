@@ -1,0 +1,734 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/wrapper/Section.astro';
+import ContentWrapper from '@/components/wrapper/ContentWrapper.astro';
+import Grid from '@/components/wrapper/Grid.astro';
+import Heading from '@/components/typography/Heading.astro';
+import Paragraph from '@/components/typography/Paragraph.astro';
+import Eyebrow from '@/components/typography/Eyebrow.astro';
+import Button from '@/components/Button.astro';
+import ProjectCard from '@/components/project/ProjectCard.astro';
+import ButtonWrapper from '@/components/wrapper/ButtonWrapper.astro';
+import Card from '@/components/item/Card.astro';
+import ServiceCard from '@/components/item/ServiceCard.astro';
+import Accordion from '@/components/interactive/Accordion.astro';
+import AccordionItem from '@/components/interactive/AccordionItem.astro';
+import Slider from '@/components/interactive/Slider.astro';
+import GoogleReviews from '@/components/testimonials/GoogleReviews.astro';
+import { services } from '@/data/services';
+
+const projects = (await getCollection('projecten')).sort((a,b) => a.data.order - b.data.order);
+---
+<BaseLayout>
+  <Section class="hero" aria-labelledby="hero-title" theme="dark">
+    <div class="hero__visual" role="img" aria-label="Sfeervolle moderne woning met hoogwaardige afwerking"></div>
+    <div class="hero__shade"></div>
+    <ContentWrapper class="site-container hero__content">
+      <Eyebrow>POL KLUSBEDRIJF · WAALWIJK</Eyebrow>
+      <Heading tag="h1" variant="display">
+        Van klus tot resultaat.<br />
+        <em>Met aandacht gemaakt.</em><br />
+        Precies zoals u wilt.
+      </Heading>
+      <Paragraph class="hero__lead">Van die ene klus tot een complete renovatie. Met vakmanschap, duidelijke afspraken en oog voor ieder detail.</Paragraph>
+      <ButtonWrapper class="hero__actions"><Button href="/offerte" class="pol-button">Bespreek uw klus ↗</Button><a href="/projects" class="text-link text-link--light">Bekijk ons werk <span>↗</span></a></ButtonWrapper>
+    </ContentWrapper>
+    <div class="hero__rail"><span>01 / VAKWERK OP MAAT</span><span>SCROLL OM TE ONTDEKKEN ↓</span></div>
+    <div class="hero__badge"><strong>Persoonlijk.<br />Precies.<br />Pol.</strong></div>
+  </Section>
+  <Section class="trust-strip">
+    <ContentWrapper class="site-container trust-strip__inner"><span>VAKWERK IN WAALWIJK EN OMGEVING</span><span> <strong>Persoonlijke aanpak</strong></span><span> <strong>Oog voor detail</strong></span><span> <strong>Helder contact</strong></span></ContentWrapper>
+  </Section>
+  <Section class="section-space intro" id="over">
+    <ContentWrapper class="site-container intro__grid">
+      <div>
+        <Eyebrow>AANGENAAM, POL KLUSBEDRIJF</Eyebrow>
+        <Heading tag="h2" variant="h1" class="display-heading">Niet zomaar<br />een klus.<br /><em>Uw plek.</em></Heading>
+      </div>
+      <div class="intro__copy flow">
+        <Paragraph class="large-copy">Een huis is meer dan vier muren. Het is de plek waar u zich thuis wilt voelen.</Paragraph>
+        <Paragraph>Daarom draait het bij Pol Klusbedrijf niet alleen om het werk zelf. We denken mee, kijken naar wat écht nodig is en werken iedere klus met aandacht af. Van praktisch onderhoud tot bijzonder maatwerk.</Paragraph>
+        <Button variant="link" href="/offerte">Vertel ons uw plannen <span>↗</span></Button>
+        <div class="intro__signature">MET ZORG GEMAAKT · VOOR LANG PLEZIER</div>
+      </div>
+    </ContentWrapper>
+  </Section>
+  <Section class="services section-space" id="diensten">
+    <ContentWrapper class="site-container">
+      <div class="section-heading">
+        <div>
+          <Eyebrow>ONZE EXPERTISE</Eyebrow>
+          <Heading tag="h2" variant="h1" class="display-heading">Wat kunnen we<br /><em>voor u maken?</em></Heading>
+        </div>
+        <Paragraph>Een handige oplossing, een frisse uitstraling of een complete verbetering. Wij denken met u mee.</Paragraph>
+      </div>
+      <Grid class="services__grid" layout="thirds">
+        {services.map((service) => (
+        <ServiceCard number={service.no} category={service.tag} icon={service.icon} title={service.title} description={service.desc} href={`/offerte?dienst=${encodeURIComponent(service.title)}`} />
+        ))}
+      </Grid>
+    </ContentWrapper>
+  </Section>
+  <Section class="statement">
+    <ContentWrapper class="site-container statement__inner">
+      <Paragraph>“Mooi werk begint<br />met <em>goed luisteren.</em>”</Paragraph><span class="statement__sub">VAN IDEE TOT DE LAATSTE AFWERKING</span>
+    </ContentWrapper>
+  </Section>
+  <Section class="section-space projects" id="projecten">
+    <ContentWrapper class="site-container">
+      <div class="section-heading">
+        <div>
+          <Eyebrow>PROJECTINSPIRATIE</Eyebrow>
+          <Heading tag="h2" variant="h1" class="display-heading">Werk dat voor<br /><em>zichzelf spreekt.</em></Heading>
+        </div>
+        <Paragraph>Bekijk ons werk en ontdek wat vakmanschap en oog voor detail voor uw project kunnen betekenen.</Paragraph>
+      </div>
+      <Slider label="Uitgelichte projecten" itemSize="min(24rem, 78vw)" class="projects__slider">{projects.filter(p => p.data.featured).slice(0,3).map((project,i) =>
+        <ProjectCard project={project} index={i} />)}
+      </Slider>
+      <Button href="/projects" variant="link">Bekijk alle projecten <span aria-hidden="true">↗</span></Button>
+    </ContentWrapper>
+  </Section>
+  <Section class="reviews-section" aria-labelledby="reviews-title">
+    <ContentWrapper class="site-container reviews-section__content">
+      <Eyebrow>KLANTERVARINGEN</Eyebrow>
+
+      <Heading tag="h2" variant="h1" class="display-heading">
+        Goed werk.<br />
+        <em>Volgens onze klanten.</em>
+      </Heading>
+
+      <Paragraph class="reviews-section__lead">
+        Ontdek hoe onze klanten het vakmanschap
+        en de service van Pol Klusbedrijf ervaren.
+      </Paragraph>
+
+      <GoogleReviews />
+    </ContentWrapper>
+  </Section>
+  <Section class="process section-space" id="werkwijze" theme="dark">
+    <ContentWrapper class="site-container">
+      <div class="section-heading">
+        <div>
+          <Eyebrow>ZO WERKEN WE</Eyebrow>
+          <Heading tag="h2" variant="h1" class="display-heading">Van idee naar<br /><em>iets moois.</em></Heading>
+        </div>
+        <Paragraph>Geen onnodig ingewikkeld proces. Gewoon duidelijke stappen en persoonlijk contact.</Paragraph>
+      </div>
+      <div class="process__steps">
+        <div><span>01</span>
+          <Heading tag="h3">Vertel uw verhaal</Heading>
+          <Paragraph>Omschrijf uw klus en voeg eventueel foto's toe. Zo krijgen we meteen een goed beeld.</Paragraph>
+        </div>
+        <div><span>02</span>
+          <Heading tag="h3">We denken mee</Heading>
+          <Paragraph>We bekijken de mogelijkheden en bespreken de aanpak, planning en benodigde materialen.</Paragraph>
+        </div>
+        <div><span>03</span>
+          <Heading tag="h3">Heldere afspraken</Heading>
+          <Paragraph>U weet vooraf wat we gaan doen. Daarna gaan we zorgvuldig aan de slag.</Paragraph>
+        </div>
+      </div>
+    </ContentWrapper>
+  </Section>
+  <Section class="section-space faq" id="vragen" aria-labelledby="faq-title">
+    <ContentWrapper class="site-container">
+      <div class="faq__layout">
+
+        <div class="faq__intro">
+          <Eyebrow>VEELGESTELDE VRAGEN</Eyebrow>
+
+          <Heading tag="h2" variant="h1" class="display-heading">
+            Goed om te <em>weten.</em>
+          </Heading>
+
+          <Paragraph class="faq__description">
+            Van de eerste vraag tot de laatste afwerking.
+            Hier vindt u antwoorden op veelgestelde vragen
+            over onze werkzaamheden, offertes en werkwijze.
+          </Paragraph>
+
+          <a href="/offerte" class="faq__cta">
+            Bespreek uw klus <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+
+        <div class="faq__questions">
+
+          <Accordion>
+            <AccordionItem title="Welke werkzaamheden kan Pol Klusbedrijf uitvoeren?">
+              <Paragraph>
+                Van kleine reparaties en montagewerk tot grotere verbeteringen
+                en renovaties in en om uw woning. Heeft u een specifieke klus?
+                Beschrijf uw wensen in het offerteformulier. Dan bekijken we
+                samen wat mogelijk is.
+              </Paragraph>
+            </AccordionItem>
+
+            <AccordionItem title="Kan ik ook een kleine klus laten uitvoeren?">
+              <Paragraph>
+                Zeker. Ook voor kleinere werkzaamheden kunt u bij Pol Klusbedrijf
+                een aanvraag doen. Of het nu gaat om een reparatie, montage
+                of een klus die al langer blijft liggen: vertel ons wat er
+                moet gebeuren, dan bespreken we de mogelijkheden.
+              </Paragraph>
+            </AccordionItem>
+
+            <AccordionItem title="Wat kost het om mijn klus te laten uitvoeren?">
+              <Paragraph>
+                Dat hangt af van de werkzaamheden, de benodigde materialen
+                en de tijd die nodig is. Daarom bekijken we iedere aanvraag
+                afzonderlijk. Zo krijgt u een prijsvoorstel dat aansluit
+                op uw situatie en wensen.
+              </Paragraph>
+            </AccordionItem>
+
+            <AccordionItem title="Is het aanvragen van een offerte vrijblijvend?">
+              <Paragraph>
+                Ja, u kunt vrijblijvend een offerte aanvragen. Beschrijf uw
+                klus zo duidelijk mogelijk en voeg eventueel foto's toe.
+                Op basis daarvan bekijken we de mogelijkheden en ontvangt
+                u een passend voorstel.
+              </Paragraph>
+            </AccordionItem>
+
+            <AccordionItem title="Hoe snel kan mijn klus worden uitgevoerd?">
+              <Paragraph>
+                Dat is afhankelijk van de omvang van uw klus en de actuele
+                planning. Bij uw aanvraag kunt u aangeven wanneer u de
+                werkzaamheden graag wilt laten uitvoeren. We bespreken
+                vervolgens wat haalbaar is.
+              </Paragraph>
+            </AccordionItem>
+
+            <AccordionItem title="Moet ik zelf materialen aanschaffen?">
+              <Paragraph>
+                Niet per se. We kunnen vooraf bespreken welke materialen
+                nodig zijn en wie deze verzorgt. Heeft u zelf al materialen
+                gekocht? Vermeld dit dan bij uw aanvraag, zodat we kunnen
+                beoordelen of ze geschikt zijn voor de werkzaamheden.
+              </Paragraph>
+            </AccordionItem>
+
+            <AccordionItem title="Moet ik de exacte afmetingen al weten?">
+              <Paragraph>
+                Nee, een schatting is vaak voldoende om uw aanvraag te
+                bespreken. Foto's en een korte omschrijving helpen ons
+                om een goed beeld van de situatie te krijgen. Waar nodig
+                nemen we de exacte maten later door.
+              </Paragraph>
+            </AccordionItem>
+
+            <AccordionItem title="Kan ik meerdere klussen tegelijk laten uitvoeren?">
+              <Paragraph>
+                Ja, dat kan. Heeft u meerdere werkzaamheden in of rondom
+                uw woning? Vermeld ze dan samen in uw aanvraag. We bekijken
+                hoe deze het beste gecombineerd en ingepland kunnen worden.
+              </Paragraph>
+            </AccordionItem>
+
+            <AccordionItem title="In welke regio is Pol Klusbedrijf actief?">
+              <Paragraph>
+                Pol Klusbedrijf is gevestigd in Waalwijk en voert werkzaamheden
+                uit in de omgeving. Woont u wat verder weg? Neem gerust
+                contact op. We bekijken graag of we uw klus kunnen uitvoeren.
+                Eventuele voorrijkosten worden vooraf besproken.
+              </Paragraph>
+            </AccordionItem>
+
+            <AccordionItem title="Krijg ik garantie op de uitgevoerde werkzaamheden?">
+              <Paragraph>
+                Pol Klusbedrijf staat voor vakkundig uitgevoerd werk.
+                In onze algemene voorwaarden staat welke garantie van
+                toepassing is op de werkzaamheden en materialen.
+                Heeft u na oplevering een vraag of ontdekt u een gebrek?
+                Neem dan contact met ons op, zodat we dit kunnen beoordelen.
+              </Paragraph>
+            </AccordionItem>
+          </Accordion>
+        </div>
+
+      </div>
+    </ContentWrapper>
+  </Section>
+  <Section class="quote-banner">
+    <ContentWrapper class="site-container quote-banner__inner">
+      <div class="flow">
+        <Eyebrow>KLAAR OM TE BEGINNEN?</Eyebrow>
+        <Heading tag="h2" variant="display" class="display-heading">Uw idee verdient<br /><em>goed vakwerk.</em></Heading>
+        <Paragraph>Groot plan of kleine klus? Vertel wat u voor ogen heeft.</Paragraph>
+        <Button href="/offerte" class="pol-button pol-button--navy">Vraag een offerte aan ↗</Button>
+      </div>
+    </ContentWrapper>
+  </Section>
+</BaseLayout>
+
+<style is:global lang="scss">
+  /* Stijlen verplaatst vanuit sass/pol.scss; bestaande selectors behouden. */
+  .hero h1 em,
+  .statement em,
+  .process h2 em {
+    font-family: Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -.055em;
+  }
+
+  .hero {
+    min-height: min(780px, 86vh);
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #102a43;
+    color: #fff;
+    isolation: isolate;
+  }
+
+  .hero__visual {
+    position: absolute;
+    inset: 0;
+    background-image: url("https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2200&q=85");
+    background-position: center 52%;
+    background-size: cover;
+    z-index: -2;
+  }
+
+  .hero__shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(9, 32, 53, .96) 0%, rgba(9, 32, 53, .87) 36%, rgba(9, 32, 53, .35) 75%, rgba(9, 32, 53, .15) 100%);
+    z-index: -1;
+  }
+
+  .hero__content {
+    padding-block: 8rem 9rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(3.7rem, 8vw, 9rem);
+    font-weight: 850;
+    letter-spacing: -.075em;
+    line-height: .99;
+    margin: 0 0 2rem;
+    max-width: 1000px;
+  }
+
+  .hero h1 em {
+    color: #ff9b50;
+  }
+
+  .hero__lead {
+    font-size: clamp(1rem, 1.6vw, 1.27rem);
+    line-height: 1.7;
+    color: #e1e8ef;
+    max-width: 520px;
+    margin: 0 0 2.5rem;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .hero__rail {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 1.25rem clamp(1.25rem, 5vw, 6rem);
+    border-top: 1px solid #ffffff38;
+    font-size: .65rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    color: #dce5ed;
+  }
+
+  .hero__badge {
+    position: absolute;
+    right: 6vw;
+    bottom: 5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1.4rem 1.8rem;
+    background: #f47b20;
+    color: #102a43;
+    transform: rotate(-4deg);
+  }
+
+  .hero__badge span {
+    font-size: 3rem;
+  }
+
+  .hero__badge strong {
+    font-size: 1.05rem;
+    line-height: 1.2;
+  }
+
+  .trust-strip {
+    --section-space: 1rem;
+    background: #f47b20;
+    color: #102a43;
+  }
+
+  .trust-strip__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.25rem 2rem;
+    min-height: 90px;
+    padding-block: 1.3rem;
+    font-size: .76rem;
+    font-weight: 800;
+    letter-spacing: .03em;
+  }
+
+  .trust-strip__inner>span:first-child {
+    font-size: .68rem;
+    letter-spacing: .13em;
+  }
+
+  .intro {
+    background: #fff;
+  }
+
+  .intro__grid {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap: clamp(3rem, 10vw, 11rem);
+    align-items: start;
+  }
+
+  .intro__copy {
+    max-width: 570px;
+  }
+
+  .intro__copy p {
+    color: #526d84;
+    font-size: 1.06rem;
+    line-height: 1.8;
+  }
+
+  .intro__copy .large-copy {
+    font-size: clamp(1.35rem, 2vw, 1.85rem);
+    font-weight: 700;
+    color: #102a43;
+    line-height: 1.5;
+  }
+
+  .intro__copy .text-link {
+    margin-top: 1.3rem;
+  }
+
+  .intro__signature {
+    margin-top: 3.8rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid #dce5ed;
+    font-size: .67rem;
+    font-weight: 850;
+    letter-spacing: .15em;
+    color: #7890a5;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .intro__signature span {
+    color: #f47b20;
+    font-size: 1.6rem;
+  }
+
+  .services {
+    background: #F3F6F8;
+  }
+
+  .section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 3rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .section-heading>p {
+    width: min(100%, 340px);
+    color: #526d84;
+    line-height: 1.75;
+    margin: 0 0 .5rem;
+  }
+
+  .services__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    background: #dce5ed;
+    border: 1px solid #dce5ed;
+  }
+
+  .statement {
+    background: #f47b20;
+    color: #102a43;
+    padding-block: clamp(4rem, 8vw, 8rem);
+  }
+
+  .statement__inner {
+    text-align: center;
+  }
+
+  .statement__asterisk {
+    font-size: 4rem;
+  }
+
+  .statement p {
+    font-size: clamp(2.7rem, 6.8vw, 7.4rem);
+    font-weight: 850;
+    letter-spacing: -.075em;
+    line-height: 1.1;
+    margin: 1.3rem 0 2rem;
+  }
+
+  .statement__sub {
+    font-size: .7rem;
+    font-weight: 850;
+    letter-spacing: .18em;
+  }
+
+  .projects {
+    background: #fff;
+  }
+
+  .process {
+    background: #102a43;
+    color: white;
+  }
+
+  .process .display-heading {
+    color: white;
+  }
+
+  .process .section-heading>p {
+    color: #b7c7d3;
+  }
+
+  .process__steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+    margin-top: 5rem;
+  }
+
+  .process__steps>div {
+    border-top: 1px solid #59748a;
+    padding-top: 1.6rem;
+  }
+
+  .process__steps span {
+    font-size: 3.5rem;
+    font-weight: 750;
+    color: #f47b20;
+    letter-spacing: -.08em;
+  }
+
+  .process__steps h3 {
+    font-size: 1.6rem;
+    margin: 2.5rem 0 .75rem;
+  }
+
+  .process__steps p {
+    color: #b7c7d3;
+    line-height: 1.7;
+    max-width: 340px;
+  }
+
+  .reviews-section {
+    background: #f3f6f8;
+    padding-block: clamp(4rem, 8vw, 7rem);
+
+    &__content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    &__lead {
+      max-width: 640px;
+      margin: 1rem 0 2.5rem;
+      color: #526d84;
+      line-height: 1.7;
+    }
+  }
+
+  @media (max-width: 976px) {
+    .hero__badge {
+      display: none;
+    }
+  }
+
+  @media (max-width: 976px) {
+    .intro__grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
+
+  @media (max-width: 976px) {
+    .services__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      min-height: 690px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero__content {
+      padding-block: 6rem 8rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero__shade {
+      background: linear-gradient(90deg, #102a43f5, #102a43a3);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero h1 {
+      font-size: clamp(3.5rem, 13vw, 5.5rem);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero__rail {
+      font-size: .54rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero__rail span:last-child {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .trust-strip__inner {
+      justify-content: start;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .section-heading {
+      flex-direction: column;
+      align-items: start;
+      gap: 1.4rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+
+    .services__grid,
+    .process__steps {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .services__grid.grid {
+    display: grid;
+  }
+
+  .services__grid.grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @media (max-width: 976px) {
+    .services__grid.grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .services__grid.grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .projects__slider {
+    padding-bottom: 1rem;
+  }
+
+  .projects__slider>.project-card {
+    min-width: 0;
+  }
+
+  .faq {
+    background: #f3f6f8;
+
+    &__layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: clamp(3rem, 6vw, 7rem);
+      align-items: start;
+    }
+
+    &__intro {
+      position: sticky;
+      top: 7rem;
+    }
+
+    &__description {
+      max-width: 420px;
+      margin-top: 1.5rem;
+      color: #526d84;
+      line-height: 1.8;
+    }
+
+    &__cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding: 1rem 1.5rem;
+      background: #102a43;
+      color: #ffffff;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: #1b405e;
+      }
+
+      span {
+        color: #f47b20;
+        font-size: 1.2rem;
+      }
+    }
+
+    &__questions {
+      min-width: 0;
+    }
+
+    @media (max-width: 900px) {
+      &__layout {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      &__intro {
+        position: static;
+      }
+    }
+  }
+
+  .slider + .button {
+      margin-block-start: var(--space-l);
+  }
+</style>

@@ -1,0 +1,29 @@
+
+---
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LegalPage from '@/components/LegalPage.astro';
+
+const entry = await getEntry(
+  'legal',
+  'algemene-voorwaarden'
+);
+
+if (!entry) {
+  throw new Error('Algemene voorwaarden niet gevonden');
+}
+
+const { Content } = await render(entry);
+---
+
+<BaseLayout
+  title="Algemene voorwaarden | Pol Klusbedrijf"
+  description="Lees de algemene voorwaarden van Pol Klusbedrijf."
+>
+  <LegalPage
+    title={entry.data.title}
+    description={entry.data.description}
+  >
+    <Content />
+  </LegalPage>
+</BaseLayout>

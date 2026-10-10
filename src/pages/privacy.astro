@@ -1,0 +1,29 @@
+
+---
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LegalPage from '@/components/LegalPage.astro';
+
+const entry = await getEntry(
+  'legal',
+  'privacy'
+);
+
+if (!entry) {
+  throw new Error('Privacyverklaring niet gevonden');
+}
+
+const { Content } = await render(entry);
+---
+
+<BaseLayout
+  title="Privacyverklaring | Pol Klusbedrijf"
+  description="Lees hoe Pol Klusbedrijf omgaat met uw persoonsgegevens en privacy."
+>
+  <LegalPage
+    title={entry.data.title}
+    description={entry.data.description}
+  >
+    <Content />
+  </LegalPage>
+</BaseLayout>

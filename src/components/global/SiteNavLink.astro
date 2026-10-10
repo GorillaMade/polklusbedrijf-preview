@@ -1,0 +1,99 @@
+
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = HTMLAttributes<'a'> & {
+  render?: boolean;
+  href: string;
+  activeSection?: string;
+};
+
+const {
+  render = true,
+  href,
+  activeSection,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const activeExpression = `isActive(
+  ${JSON.stringify(href)},
+  ${JSON.stringify(activeSection ?? null)}
+)`;
+
+const currentExpression = `${activeExpression}
+  ? ${JSON.stringify(href.includes('#') || activeSection ? 'location' : 'page')}
+  : null`;
+---
+
+{render && (
+  <a
+    {...rest}
+    href={href}
+    data-active-section={activeSection}
+    class:list={['site-nav-link', className]}
+    x-bind:class={`{ 'is-active': ${activeExpression} }`}
+    x-bind:aria-current={currentExpression}
+  >
+    <slot />
+  </a>
+)}
+
+<style lang="scss">
+  .site-nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 2.75rem;
+    padding-block: var(--space-xs);
+
+    color: var(--text-primary);
+    font: inherit;
+    font-weight: var(--fw-strong);
+    text-decoration: none;
+
+    transition: color var(--duration-fast) ease;
+
+    &::after {
+      content: '';
+
+      position: absolute;
+      inset-inline: 0;
+      bottom: 0;
+
+      height: 2px;
+      background-color: currentColor;
+
+      transform: scaleX(0);
+      transform-origin: left center;
+
+      transition: transform var(--duration-fast) ease;
+    }
+
+    &.is-active::after,
+    &[aria-current='page']::after,
+    &[aria-current='location']::after {
+      transform: scaleX(1);
+    }
+
+    @media (hover: hover) {
+      &:hover::after {
+        transform: scaleX(1);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--focus-color);
+      outline-offset: 3px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav-link,
+    .site-nav-link::after {
+      transition: none;
+    }
+  }
+</style>

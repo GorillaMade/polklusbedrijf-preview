@@ -1,0 +1,9 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/wrapper/Section.astro';
+import ContentWrapper from '@/components/wrapper/ContentWrapper.astro';
+import Heading from '@/components/typography/Heading.astro';
+import Paragraph from '@/components/typography/Paragraph.astro';
+import Button from '@/components/Button.astro';
+---
+<BaseLayout title="Pagina niet gevonden" description="De opgevraagde pagina bestaat niet." noindex><Section space="large"><ContentWrapper size="narrow"><div class="stack"><Heading tag="h1">404 — Pagina niet gevonden</Heading><Paragraph>De pagina die je zoekt bestaat niet of is verplaatst.</Paragraph><Button href="/">Terug naar home</Button></div></ContentWrapper></Section></BaseLayout>

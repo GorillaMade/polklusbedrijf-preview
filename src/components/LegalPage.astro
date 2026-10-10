@@ -1,0 +1,178 @@
+
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<section class="legal-page">
+  <div class="legal-page__container">
+    <header class="legal-page__header">
+      <span class="legal-page__eyebrow">POL KLUSBEDRIJF</span>
+      <h1>{title}</h1>
+      {description && <p>{description}</p>}
+    </header>
+
+    <article class="legal-page__content">
+      <slot />
+    </article>
+  </div>
+</section>
+
+<style lang="scss">
+  .legal-page {
+    background: #ffffff;
+    padding: clamp(4rem, 8vw, 7rem) 1.5rem;
+
+    &__container {
+      width: min(100%, 900px);
+      margin-inline: auto;
+    }
+
+    &__header {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #dce4e9;
+
+      h1 {
+        color: #102a43;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        line-height: 1.15;
+        margin: 0.75rem 0 1rem;
+      }
+
+      p {
+        color: #526d84;
+        line-height: 1.7;
+      }
+    }
+
+    &__eyebrow {
+      color: #f47b20;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+    }
+
+    &__content {
+      color: #102a43;
+      line-height: 1.85;
+      font-size: 1rem;
+
+      :global(h2) {
+        margin: 2.5rem 0 1rem;
+        color: #102a43;
+        font-size: clamp(1.3rem, 3vw, 1.65rem);
+        line-height: 1.35;
+      }
+
+      :global(h3) {
+        margin: 2rem 0 0.75rem;
+        color: #102a43;
+      }
+
+      :global(p) {
+        margin: 0 0 1.25rem;
+      }
+
+      :global(ul),
+      :global(ol) {
+        margin: 0 0 1.5rem;
+        padding-left: 1.5rem;
+      }
+
+      :global(li) {
+        margin-bottom: 0.5rem;
+      }
+
+      :global(strong) {
+        font-weight: 700;
+      }
+
+      :global(a) {
+        color: #c4560b;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+    }
+  }
+
+  // Markdown-tabellen
+       :global(table) {
+         display: block;
+         width: 100%;
+         margin: 2rem 0 2.5rem;
+         overflow-x: auto;
+         border: 1px solid #dce4e9;
+         border-radius: 12px;
+         border-spacing: 0;
+         border-collapse: separate;
+         background: #ffffff;
+         box-shadow: 0 8px 28px rgb(16 42 67 / 5%);
+         font-size: 0.9rem;
+         line-height: 1.65;
+         -webkit-overflow-scrolling: touch;
+       }
+
+       :global(th),
+       :global(td) {
+         padding: 1.1rem 1.25rem;
+         text-align: left;
+         vertical-align: top;
+       }
+
+       :global(th) {
+         background: #102a43;
+         color: #ffffff;
+         font-weight: 700;
+         border-bottom: 3px solid #f47b20;
+       }
+
+       :global(td) {
+         color: #526d84;
+         border-bottom: 1px solid #e5ebf0;
+       }
+
+       :global(td:first-child) {
+         width: 45%;
+         min-width: 220px;
+         color: #102a43;
+         font-weight: 600;
+       }
+
+       :global(tbody tr:nth-child(even)) {
+         background: #f3f6f8;
+       }
+
+       :global(tbody tr:hover) {
+         background: #fff7f0;
+       }
+
+       :global(tbody tr:last-child td) {
+         border-bottom: none;
+       }
+
+       @media (max-width: 768px) {
+         :global(table) {
+           font-size: 0.85rem;
+         }
+
+         :global(th),
+         :global(td) {
+           padding: 0.9rem 1rem;
+         }
+
+         :global(th:first-child),
+         :global(td:first-child) {
+           min-width: 200px;
+         }
+
+         :global(th:last-child),
+         :global(td:last-child) {
+           min-width: 260px;
+         }
+       }
+</style>

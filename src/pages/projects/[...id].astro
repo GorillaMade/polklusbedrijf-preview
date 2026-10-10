@@ -1,0 +1,322 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/wrapper/Section.astro';
+import ContentWrapper from '@/components/wrapper/ContentWrapper.astro';
+import Grid from '@/components/wrapper/Grid.astro';
+import Heading from '@/components/typography/Heading.astro';
+import Paragraph from '@/components/typography/Paragraph.astro';
+import Eyebrow from '@/components/typography/Eyebrow.astro';
+import RichText from '@/components/typography/RichText.astro';
+import Img from '@/components/media/Img.astro';
+import Button from '@/components/Button.astro';
+import ButtonWrapper from '@/components/wrapper/ButtonWrapper.astro';
+import Slider from '@/components/interactive/Slider.astro';
+
+export async function getStaticPaths() {
+const projects = (await getCollection('projecten')).sort((a,b) => a.data.order - b.data.order);
+return projects.map((project, index) => ({
+    params: { id: project.id },
+    props: { project, next: projects[(index + 1) % projects.length] },
+  }));
+}
+interface Props { project: CollectionEntry<'projecten'>; next: CollectionEntry<'projecten'>; }
+  const { project, next } = Astro.props;
+  const { Content } = await render(project);
+  const { title, summary, category, cover, gallery, highlights, before, after, concept } = project.data;
+---
+
+<BaseLayout title={`${title} | Projecten | Pol Klusbedrijf`} description={summary}>
+    <Section class="project-detail-hero" theme="dark">
+    <ContentWrapper class="site-container stack">
+        <a class="project-back" href="/projects">← Alle projecten</a>
+        <div>
+            <Eyebrow>{category}</Eyebrow>
+            <Heading tag="h1" variant="display">{title}</Heading>
+            <Paragraph>{summary}</Paragraph>
+        </div>
+    </ContentWrapper>
+    </Section>
+    <Section class="project-detail section-space">
+    <ContentWrapper class="site-container">
+        <div class="project-detail__cover"><Img src={cover} alt={`${concept ? 'Sfeerbeeld bij' : 'Projectfoto van' } ${title}`} loading="eager" />{concept && <span>CONCEPTBEELD · GEEN FOTO VAN EEN UITGEVOERD PROJECT</span>}</div>
+        <Grid class="project-detail__grid" layout="halves">
+        <div>
+            <Eyebrow>HET PROJECT</Eyebrow>
+            <Heading tag="h2" variant="h1" class="display-heading">Mooi werk begint<br /><em>bij aandacht.</em></Heading>
+        </div>
+        <div>
+            <RichText class="project-detail__description">
+            <Content />
+            </RichText>{highlights.length > 0 && <ul class="project-detail__highlights">{highlights.map(highlight => <li>{highlight}</li>)}</ul>}<ButtonWrapper><Button href={`/offerte?dienst=${encodeURIComponent(category==='RENOVATIE' ? 'Traprenovatie' : 'Timmerwerk & maatwerk' )}`} class="pol-button">Bespreek een vergelijkbare klus ↗</Button></ButtonWrapper>
+        </div>
+        </Grid>
+        {gallery.length > 1 && <div class="project-gallery">
+        <Eyebrow>PROJECTFOTO'S</Eyebrow>
+        <Slider label={`Projectfoto’s van ${title}`} itemSize="min(30rem, 82vw)">{gallery.map((image,i) => <Img src={image} alt={`${title} – foto ${i+1}`} loading="lazy" />)}</Slider>
+        </div>}
+        {before && after && <div class="comparison-section">
+        <Eyebrow>VOOR EN NA</Eyebrow>
+        <Heading tag="h2">Het verschil in beeld.</Heading>
+        <div class="before-after" x-data="{ position: 50 }" :style="`--compare-position: ${position}%`"><Img src={after} alt={`Situatie na uitvoering: ${title}`} />
+            <div class="before-after__before"><Img src={before} alt={`Situatie vóór uitvoering: ${title}`} /></div><span class="before-after__tag before-after__tag--before">VOOR</span><span class="before-after__tag before-after__tag--after">NA</span>
+            <div class="before-after__divider" aria-hidden="true"></div><input type="range" min="0" max="100" step="1" value="50" x-model="position" aria-label="Vergelijk voor- en nafoto's" />
+        </div>
+        </div>}
+    </ContentWrapper>
+    </Section>
+    <Section class="next-project">
+    <ContentWrapper class="site-container"><span>VOLGEND PROJECT</span><a href={`/projects/${next.id}`}>{next.data.title} <span aria-hidden="true">↗</span></a></ContentWrapper>
+    </Section>
+</BaseLayout>
+
+<style is:global lang="scss">
+    /* Stijlen verplaatst vanuit sass/pol.scss; bestaande selectors behouden. */
+    .project-detail-hero {
+    background: #102a43;
+    color: #fff;
+    padding-block: clamp(5rem, 10vw, 9rem);
+    }
+
+    .project-detail-hero h1 {
+    font-size: clamp(3.8rem, 9vw, 9rem);
+    line-height: 1.02;
+    letter-spacing: -.075em;
+    margin: 1.2rem 0;
+    }
+
+    .project-detail-hero h1 em {
+    color: #f47b20;
+    font-style: normal;
+    }
+
+    .project-detail-hero p:not(.eyeline) {
+    color: #cbd7e0;
+    max-width: 43rem;
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    line-height: 1.6;
+    }
+
+    .project-back {
+    display: inline-block;
+    margin-bottom: 2.5rem;
+    color: #fff;
+    text-underline-offset: 5px;
+    }
+
+    .project-detail__cover {
+    position: relative;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    background: #dce5ed;
+    }
+
+    .project-detail__cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    }
+
+    .project-detail__cover>span {
+    position: absolute;
+    inset-inline-start: 1rem;
+    bottom: 1rem;
+    padding: .7rem 1rem;
+    background: #fff;
+    color: #102a43;
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    }
+
+    .project-detail__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 7vw, 8rem);
+    padding-block: clamp(4rem, 8vw, 8rem);
+    }
+
+    .project-detail__description {
+    color: #526d84;
+    font-size: 1.15rem;
+    line-height: 1.8;
+    margin-top: 0;
+    }
+
+    .project-detail__highlights {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0 3rem;
+    }
+
+    .project-detail__highlights li {
+    border-top: 1px solid #dce5ed;
+    padding: .9rem 0;
+    font-weight: 700;
+    }
+
+    .project-detail__highlights li::before {
+    content: "→";
+    color: #d55f11;
+    margin-right: 1rem;
+    }
+
+    .next-project {
+    background: #F3F6F8;
+    padding-block: 4rem;
+    }
+
+    .next-project .site-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    }
+
+    .next-project .site-container>span {
+    font-size: .75rem;
+    font-weight: 800;
+    letter-spacing: .15em;
+    }
+
+    .next-project a {
+    color: #102a43;
+    font-size: clamp(1.7rem, 4vw, 3.5rem);
+    font-weight: 850;
+    letter-spacing: -.04em;
+    text-decoration: none;
+    }
+
+    .next-project a:hover {
+    color: #b84d0c;
+    }
+
+    .comparison-section {
+    padding-bottom: 5rem;
+    }
+
+    .comparison-section h2 {
+    font-size: clamp(2rem, 5vw, 4rem);
+    letter-spacing: -.05em;
+    }
+
+    .before-after {
+    --compare-position: 50%;
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    background: #dce5ed;
+    }
+
+    .before-after>img,
+    .before-after__before img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    }
+
+    .before-after__before {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(0 calc(100% - var(--compare-position)) 0 0);
+    }
+
+    .before-after__divider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--compare-position);
+    width: 3px;
+    transform: translateX(-50%);
+    background: #fff;
+    pointer-events: none;
+    }
+
+    .before-after__divider::after {
+    content: "↔";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: #fff;
+    color: #102a43;
+    font-size: 1.5rem;
+    box-shadow: 0 3px 15px #0003;
+    }
+
+    .before-after__tag {
+    position: absolute;
+    top: 1rem;
+    background: #102a43;
+    color: #fff;
+    padding: .5rem .8rem;
+    font-size: .75rem;
+    font-weight: 800;
+    }
+
+    .before-after__tag--before {
+    left: 1rem;
+    }
+
+    .before-after__tag--after {
+    right: 1rem;
+    }
+
+    .before-after input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+    }
+
+    .before-after input:focus-visible {
+    opacity: .12;
+    outline: 4px solid #f47b20;
+    outline-offset: -4px;
+    }
+
+    @media (max-width:640px) {
+    .project-detail__grid {
+        grid-template-columns: 1fr;
+    }
+    }
+
+    @media (max-width:640px) {
+
+    .project-detail__cover,
+    .before-after {
+        aspect-ratio: 4/3;
+    }
+    }
+
+    @media (max-width:640px) {
+    .project-detail__cover>span {
+        font-size: .6rem;
+    }
+    }
+
+    .project-gallery {
+    margin-block-start: var(--space-l);
+    }
+
+    .project-gallery .grid {
+    gap: var(--space-s);
+    }
+
+    .project-gallery img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-m);
+    }
+</style>

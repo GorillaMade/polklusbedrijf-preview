@@ -1,0 +1,553 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/wrapper/Section.astro';
+import ContentWrapper from '@/components/wrapper/ContentWrapper.astro';
+import Heading from '@/components/typography/Heading.astro';
+import Paragraph from '@/components/typography/Paragraph.astro';
+import Eyebrow from '@/components/typography/Eyebrow.astro';
+import Button from '@/components/Button.astro';
+import Form from '@/components/form/Form.astro';
+import Fieldset from '@/components/form/Fieldset.astro';
+import Input from '@/components/form/Input.astro';
+import Select from '@/components/form/Select.astro';
+import Textarea from '@/components/form/Textarea.astro';
+import Choice from '@/components/form/Choice.astro';
+import { services } from '@/data/services';
+const types = [
+...services.map((service) => service.title),
+'Anders / meerdere werkzaamheden'
+];
+---
+<BaseLayout title="Offerte aanvragen | Pol Klusbedrijf" description="Vraag in enkele stappen een offerte aan voor timmerwerk, schilderwerk, traprenovatie en andere klussen in Waalwijk en omgeving.">
+  <Section class="quote-page">
+    <ContentWrapper class="site-container quote-page__grid">
+        <aside class="quote-aside" data-theme="dark">
+        <Eyebrow>VERTEL ONS UW PLANNEN</Eyebrow>
+        <Heading tag="h1">Een goed plan<br />begint met<br /><em>een gesprek.</em></Heading>
+        <p>Hoe meer we weten over uw klus, hoe gerichter we met u mee kunnen denken. U hoeft nog niet alles zeker te weten.</p>
+        <div class="quote-aside__notes"><span> Persoonlijk en vrijblijvend</span><span> In een paar overzichtelijke stappen</span><span> Ruimte voor foto's en details</span></div>
+        <div class="quote-aside__foot">POL KLUSBEDRIJF · WAALWIJK</div>
+      </aside>
+      <div class="quote-form-wrap" x-data={`{ step: 1, total: 5, sending: false, selectedServices: new URLSearchParams(window.location.search).getAll('dienst').filter(Boolean), serviceError: false, next() { if (this.step===1 && this.selectedServices.length===0) { this.serviceError=true; this.$nextTick(()=> this.$refs.serviceChoices.focus()); return; } this.serviceError = false; const current = this.$refs.form.querySelector('[data-step="' + this.step + '"]'); const fields = [...current.querySelectorAll('input, select, textarea')].filter(el => !el.disabled); for (const field of fields) { if (!field.checkValidity()) { field.reportValidity(); field.focus(); return; } } if (this.step < this.total) { this.step++; this.$nextTick(()=> this.$refs.form.querySelector('[data-step=\"' + this.step + '\"] h2').focus()); } }, back() { if (this.step > 1) { this.step--; this.$nextTick(() => this.$refs.form.querySelector('[data-step=\"' + this.step + '\"] h2').focus()); } } }`}>
+          <div class="quote-progress">
+            <div><span>OFFERTEAANVRAAG</span><strong x-text="'STAP ' + step + ' VAN ' + total">STAP 1 VAN 5</strong></div>
+            <div class="quote-progress__track" role="progressbar" aria-label="Voortgang offerteaanvraag" :aria-valuenow="step" aria-valuemin="1" :aria-valuemax="total"><span :style="'width:' + (step / total * 100) + '%'" style="width:20%"></span></div>
+          </div>
+          <Form name="offerte" method="POST" action="/bedankt" data-netlify="true" netlify-honeypot="website" enctype="multipart/form-data" x-ref="form" @submit="sending = true">
+            <input type="hidden" name="form-name" value="offerte" />
+            <p class="hidden-honeypot"><label>Laat dit veld leeg <input name="website" tabindex="-1" autocomplete="off" /></label></p>
+            <Fieldset class="wizard-step" data-step="1" x-show="step === 1" legend="Soort klus">
+              <p class="form-kicker">01 — UW PROJECT</p>
+              <Heading tag="h2" tabindex="-1" x-ref="stepTitle">Wat wilt u<br /><em>laten maken?</em></Heading>
+              <Paragraph class="form-intro">Selecteer één of meerdere werkzaamheden die het beste bij uw project passen.</Paragraph>
+              <div class="choice-grid" x-ref="serviceChoices" tabindex="-1" role="group" aria-label="Selecteer werkzaamheden">{types.map((type,i)=><label class="choice-card"><input type="checkbox" value={type} x-model="selectedServices" @change="serviceError = false" /><span class="choice-card__check">✓</span><span class="choice-card__num">{String(i+1).padStart(2,'0')}</span><strong>{type}</strong></label>)}</div>
+              <p class="service-error" x-show="serviceError" x-cloak role="alert">Selecteer minimaal één werkzaamheid.</p><input type="hidden" name="werkzaamheden" :value="selectedServices.join(', ')" /><Textarea class="form-field" id="projectbeschrijving" label="Omschrijf uw klus" name="omschrijving" rows="4" placeholder="Wat wilt u laten doen? Wat is de huidige situatie en wat is uw gewenste resultaat?" required minlength="15" />
+            </Fieldset>
+            <Fieldset class="wizard-step" data-step="2" x-show="step === 2" x-cloak legend="Locatie en situatie">
+              <p class="form-kicker">02 — LOCATIE & SITUATIE</p>
+              <Heading tag="h2" tabindex="-1" x-ref="stepTitle2">Waar gaan we<br /><em>aan de slag?</em></Heading>
+              <Paragraph class="form-intro">De locatie en omstandigheden helpen om de klus goed in te schatten.</Paragraph>
+              <div class="form-grid"><Input class="form-field" id="postcode" label="Postcode" name="postcode" autocomplete="postal-code" placeholder="1234 AB" required pattern="[1-9][0-9]{3} ?[A-Za-z]{2}" title="Vul een Nederlandse postcode in" /><Input class="form-field" id="huisnummer" label="Huisnummer" name="huisnummer" required placeholder="12A" /><Input class="form-field" id="plaats" label="Plaats" name="plaats" autocomplete="address-level2" required placeholder="Bijv. Waalwijk" /><Input class="form-field" id="straat" label="Straat (optioneel)" name="straat" autocomplete="street-address" placeholder="Straatnaam" /><Select class="form-field" id="gebouw" label="Type pand" name="pandtype">
+                  <option value="">Maak een keuze</option>
+                  <option>Rijtjeswoning</option>
+                  <option>Hoekwoning</option>
+                  <option>Vrijstaande woning</option>
+                  <option>Appartement</option>
+                  <option>Bedrijfspand</option>
+                  <option>Anders</option>
+                </Select><Select class="form-field" id="ruimte" label="Waar vindt de klus plaats?" name="ruimte">
+                  <option value="">Maak een keuze</option>
+                  <option>Binnen</option>
+                  <option>Buiten</option>
+                  <option>Binnen en buiten</option>
+                </Select><Select class="form-field" id="bewoond" label="Is het pand in gebruik?" name="pand_in_gebruik">
+                  <option value="">Maak een keuze</option>
+                  <option>Ja</option>
+                  <option>Nee</option>
+                  <option>Gedeeltelijk</option>
+                </Select><Select class="form-field" id="toegang" label="Bereikbaarheid" name="bereikbaarheid">
+                  <option value="">Maak een keuze</option>
+                  <option>Begane grond / goed bereikbaar</option>
+                  <option>Verdieping met lift</option>
+                  <option>Verdieping zonder lift</option>
+                  <option>Beperkte toegang</option>
+                  <option>Anders</option>
+                </Select></div>
+            </Fieldset>
+            <Fieldset class="wizard-step" data-step="3" x-show="step === 3" x-cloak legend="Omvang en materialen">
+              <p class="form-kicker">03 — DETAILS & FOTO'S</p>
+              <Heading tag="h2" tabindex="-1" x-ref="stepTitle3">De details maken<br /><em>het verschil.</em></Heading>
+              <Paragraph class="form-intro">Afmetingen en foto's helpen om uw wensen goed te begrijpen.</Paragraph>
+              <div class="form-grid"><Input class="form-field" id="afmetingen" label="Afmetingen / oppervlakte" name="afmetingen" placeholder="Bijv. 4 × 3 m of 20 m²" /><Input class="form-field" id="aantal" label="Aantal onderdelen / ruimtes" name="aantal" placeholder="Bijv. 3 deuren of 2 kamers" /><Select class="form-field" id="materiaal" label="Materiaalvoorkeur" name="materialen">
+                  <option value="">Nog niet bekend</option>
+                  <option>Ik lever zelf materialen</option>
+                  <option>Graag advies en levering</option>
+                  <option>Deels zelf, deels via Pol</option>
+                </Select><Select class="form-field" id="afvoer" label="Afvoer van oud materiaal" name="afvalafvoer">
+                  <option value="">Nog niet bekend</option>
+                  <option>Ja, graag meenemen in de offerte</option>
+                  <option>Nee, regel ik zelf</option>
+                  <option>Niet van toepassing</option>
+                </Select></div>
+              <div class="form-field"><label for="foto">Foto's, schetsen of plattegrond (optioneel)</label><input id="foto" name="bijlagen" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" multiple /><small>JPG, PNG, WebP of PDF. Deel alleen foto's waarvoor u toestemming heeft. Controleer de uploadlimiet van uw formulierprovider.</small></div><Textarea class="form-field" id="details" label="Aanvullende informatie" name="bijzonderheden" rows="4" placeholder="Bijv. bestaande schade, sloopwerk, specifieke afwerking, parkeermogelijkheden of andere aandachtspunten." />
+            </Fieldset>
+            <Fieldset class="wizard-step" data-step="4" x-show="step === 4" x-cloak legend="Planning en budget">
+              <p class="form-kicker">04 — PLANNING & BUDGET</p>
+              <Heading tag="h2" tabindex="-1" x-ref="stepTitle4">Wanneer past<br /><em>het voor u?</em></Heading>
+              <Paragraph class="form-intro">Een indicatie is voldoende. We bespreken de mogelijkheden samen.</Paragraph>
+              <div class="form-grid"><Select class="form-field" id="start" label="Gewenste start" name="startmoment">
+                  <option value="">Nog flexibel</option>
+                  <option>Zo snel mogelijk</option>
+                  <option>Binnen 1 maand</option>
+                  <option>Binnen 1–3 maanden</option>
+                  <option>Over 3 maanden of later</option>
+                  <option>In overleg</option>
+                </Select><Input class="form-field" id="deadline" label="Gewenste opleverdatum" name="opleverdatum" type="date" /><Select class="form-field" id="budget" label="Indicatief budget" name="budget">
+                  <option value="">Liever bespreken</option>
+                  <option>Tot € 500</option>
+                  <option>€ 500 – € 1.500</option>
+                  <option>€ 1.500 – € 5.000</option>
+                  <option>€ 5.000 – € 10.000</option>
+                  <option>Meer dan € 10.000</option>
+                </Select><Select class="form-field" id="opname" label="Is een opname op locatie mogelijk?" name="opname">
+                  <option value="">In overleg</option>
+                  <option>Ja</option>
+                  <option>Bij voorkeur eerst telefonisch</option>
+                </Select></div><Textarea class="form-field" id="planning" label="Overige wensen voor de planning" name="planning_toelichting" rows="3" placeholder="Bijv. werkdagen, sleuteloverdracht of belangrijke momenten." />
+            </Fieldset>
+            <Fieldset class="wizard-step" data-step="5" x-show="step === 5" x-cloak legend="Contactgegevens">
+              <p class="form-kicker">05 — CONTACTGEGEVENS</p>
+              <Heading tag="h2" tabindex="-1" x-ref="stepTitle5">Hoe kunnen we<br /><em>u bereiken?</em></Heading>
+              <Paragraph class="form-intro">Nog even uw gegevens en dan is uw aanvraag compleet.</Paragraph>
+              <div class="form-grid"><Input class="form-field" id="naam" label="Naam" name="naam" autocomplete="name" required placeholder="Uw volledige naam" /><Input class="form-field" id="email" label="E-mailadres" name="email" type="email" autocomplete="email" required placeholder="naam@voorbeeld.nl" /><Input class="form-field" id="telefoon" label="Telefoonnummer" name="telefoon" type="tel" autocomplete="tel" required placeholder="06 1234 5678" /><Select class="form-field" id="contactvoorkeur" label="Voorkeur voor contact" name="contactvoorkeur">
+                  <option>Telefonisch</option>
+                  <option>Per e-mail</option>
+                  <option>Geen voorkeur</option>
+                </Select></div>
+              <Choice id="privacy-akkoord" class="privacy-check" name="privacy_akkoord" value="ja" required label="Ik ga akkoord met het gebruik van mijn gegevens voor het behandelen van mijn offerteaanvraag (zie de privacyverklaring)." />
+              <Paragraph><a href="/privacy" target="_blank" rel="noopener noreferrer">Lees de privacyinformatie</a>.</Paragraph>
+              <Paragraph class="form-notice">Een aanvraag is vrijblijvend en vormt nog geen opdracht. We vragen alleen gegevens die helpen om uw klus te beoordelen.</Paragraph>
+            </Fieldset>
+            <div class="wizard-actions"><Button type="button" class="wizard-back" x-show="step > 1" x-cloak @click="back()">← Vorige stap</Button><span x-show="step === 1" class="wizard-actions__hint">* Verplicht veld</span><Button type="button" class="pol-button" x-show="step < total" @click="next()">Volgende stap <span>→</span></Button><Button type="submit" class="pol-button" x-show="step === total" x-cloak :disabled="sending"><span x-text="sending ? 'Versturen…' : 'Verstuur aanvraag'"></span><span>↗</span></Button></div>
+          </Form>
+          <p class="quote-form-wrap__foot">VEILIG EN VERTROUWELIJK · POL KLUSBEDRIJF</p>
+      </div>
+    </ContentWrapper>
+  </Section>
+</BaseLayout>
+
+<style is:global lang="scss">
+  /* Stijlen verplaatst vanuit sass/pol.scss; bestaande selectors behouden. */
+  .quote-banner em,
+  .quote-aside em,
+  .wizard-step h2 em {
+    font-family: Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -.055em;
+  }
+
+  .quote-banner {
+    background: #f47b20;
+    padding-block: clamp(4rem, 7vw, 7rem);
+  }
+
+  .quote-banner__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .quote-banner h2 {
+    font-size: clamp(2.8rem, 6vw, 6.5rem);
+    letter-spacing: -.07em;
+    line-height: 1.04;
+    color: #102a43;
+    margin: 0 0 1.5rem;
+  }
+
+  .quote-banner p:last-child {
+    font-size: 1.1rem;
+    color: #193b57;
+  }
+
+  .quote-page__grid {
+    display: grid;
+    grid-template-columns: minmax(280px, .82fr) minmax(0, 1.18fr);
+    gap: clamp(2rem, 5vw, 6rem);
+    padding-block: clamp(3rem, 6vw, 6rem);
+    align-items: start;
+  }
+
+  .quote-aside {
+    background: #102a43;
+    color: white;
+    padding: clamp(2rem, 4vw, 4.5rem);
+    position: sticky;
+    top: 7rem;
+    min-height: 690px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .quote-aside h1 {
+    font-size: clamp(2.8rem, 4.5vw, 5.5rem);
+    line-height: 1.07;
+    letter-spacing: -.065em;
+    margin: 0 0 2rem;
+  }
+
+  .quote-aside h1 em {
+    color: #f47b20;
+  }
+
+  .quote-aside>p:not(.eyeline) {
+    color: #c5d1da;
+    line-height: 1.8;
+    font-size: 1.08rem;
+  }
+
+  .quote-aside__notes {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    margin-top: 3rem;
+    color: #f6f8fa;
+    font-size: .9rem;
+  }
+
+  .quote-aside__foot {
+    margin-top: auto;
+    padding-top: 3rem;
+    color: #f47b20;
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .16em;
+  }
+
+  .quote-form-wrap {
+    background: white;
+    padding: clamp(1.5rem, 4vw, 4rem);
+    box-shadow: 0 12px 60px #102a4310;
+  }
+
+  .quote-progress {
+    margin-bottom: 3.2rem;
+  }
+
+  .quote-progress>div:first-child {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: #526d84;
+    font-size: .68rem;
+    letter-spacing: .14em;
+    font-weight: 800;
+  }
+
+  .quote-progress strong {
+    color: #b84d0c;
+  }
+
+  .quote-progress__track {
+    height: 5px;
+    background: #e6edf2;
+    margin-top: 1rem;
+    overflow: hidden;
+  }
+
+  .quote-progress__track span {
+    display: block;
+    height: 100%;
+    background: #f47b20;
+    transition: width .25s;
+  }
+
+  .wizard-step {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+
+  .form-kicker {
+    color: #b84d0c;
+    font-size: .7rem;
+    letter-spacing: .15em;
+    font-weight: 850;
+    margin: 0 0 1rem;
+  }
+
+  .wizard-step h2 {
+    font-size: clamp(2.2rem, 4vw, 4rem);
+    letter-spacing: -.065em;
+    line-height: 1.06;
+    color: #102a43;
+    margin: 0 0 1.25rem;
+  }
+
+  .wizard-step h2 em {
+    color: #e66b15;
+  }
+
+  .form-intro {
+    color: #526d84;
+    line-height: 1.7;
+    margin: 0 0 2.5rem;
+  }
+
+  .choice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .75rem;
+    margin-bottom: 2rem;
+  }
+
+  .choice-card {
+    position: relative;
+    border: 1px solid #dce5ed;
+    padding: 1.1rem;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: border .2s, background .2s;
+  }
+
+  .choice-card:has(input:checked) {
+    border-color: #f47b20;
+    background: #fff6ef;
+    box-shadow: inset 0 0 0 1px #f47b20;
+  }
+
+  .service-error {
+    color: #b84d0c;
+    font-size: .9rem;
+    margin: -1rem 0 1.5rem;
+  }
+
+  .choice-card:focus-within {
+    outline: 2px solid #102a43;
+    outline-offset: 2px;
+  }
+
+  .choice-card input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .choice-card__check {
+    position: absolute;
+    right: .8rem;
+    top: .8rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid #dce5ed;
+    color: transparent;
+    border-radius: 50%;
+    font-size: .8rem;
+  }
+
+  .choice-card:has(input:checked) .choice-card__check {
+    color: white;
+    background: #f47b20;
+    border-color: #f47b20;
+  }
+
+  .choice-card__num {
+    color: #7890a5;
+    font-size: .65rem;
+    font-weight: 800;
+  }
+
+  .choice-card strong {
+    max-width: 90%;
+    font-size: .91rem;
+    line-height: 1.4;
+    color: #102a43;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.2rem;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    margin-bottom: 1.4rem;
+    min-width: 0;
+  }
+
+  .form-field label {
+    font-size: .83rem;
+    font-weight: 800;
+    color: #102a43;
+  }
+
+  .form-field label span {
+    color: #b84d0c;
+  }
+
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #cbd9e4;
+    background: #fff;
+    color: #102a43;
+    border-radius: 2px;
+    font: inherit;
+    padding: .95rem 1rem;
+    min-height: 3.3rem;
+  }
+
+  .form-field textarea {
+    resize: vertical;
+  }
+
+  .form-field input:focus,
+  .form-field select:focus,
+  .form-field textarea:focus {
+    outline: 2px solid #f47b20;
+    outline-offset: 1px;
+  }
+
+  .form-field small {
+    color: #6b8194;
+    font-size: .75rem;
+    line-height: 1.5;
+  }
+
+  .form-field input[type=file] {
+    font-size: .8rem;
+  }
+
+  .privacy-check {
+    display: flex;
+    gap: .8rem;
+    align-items: start;
+    line-height: 1.6;
+    font-size: .86rem;
+    color: #35516b;
+    cursor: pointer;
+  }
+
+  .privacy-check input {
+    width: 1.2rem;
+    height: 1.2rem;
+    flex: none;
+    margin-top: .2rem;
+    accent-color: #f47b20;
+  }
+
+  .privacy-check a {
+    color: #b84d0c;
+  }
+
+  .form-notice {
+    color: #7890a5;
+    font-size: .82rem;
+    line-height: 1.6;
+    margin-top: 1.5rem;
+  }
+
+  .wizard-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    padding-top: 1.8rem;
+    border-top: 1px solid #dce5ed;
+  }
+
+  .wizard-back {
+    border: 0;
+    background: none;
+    padding: .8rem 0;
+    color: #35516b;
+    cursor: pointer;
+    font-weight: 800;
+  }
+
+  .wizard-back:hover {
+    color: #b84d0c;
+  }
+
+  .wizard-actions__hint,
+  .quote-form-wrap__foot {
+    color: #7890a5;
+    font-size: .7rem;
+    font-weight: 750;
+    letter-spacing: .07em;
+  }
+
+  .quote-form-wrap__foot {
+    margin: 2rem 0 0;
+    text-align: center;
+  }
+
+  .hidden-honeypot {
+    position: absolute;
+    left: -9999px;
+  }
+
+  @media (max-width: 976px) {
+    .quote-page__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 976px) {
+    .quote-aside {
+      position: static;
+      min-height: 0;
+    }
+  }
+
+  @media (max-width: 976px) {
+    .quote-aside__foot {
+      margin-top: 2rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .quote-banner__inner {
+      flex-direction: column;
+      align-items: start;
+    }
+  }
+
+  @media (max-width: 640px) {
+
+    .choice-grid,
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .choice-card {
+      min-height: 90px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .wizard-actions {
+      flex-wrap: wrap;
+    }
+  }
+
+  .wizard-step.fieldset>.fieldset__fields {
+    display: block;
+  }
+</style>

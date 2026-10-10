@@ -1,0 +1,104 @@
+---
+import {
+  reviews as defaultReviews,
+  googleReviewsUrl,
+  type Review
+} from '@/data/reviews';
+
+interface Props {
+  reviews?: Review[];
+  googleUrl?: string;
+}
+
+const {
+  reviews = defaultReviews,
+  googleUrl = googleReviewsUrl
+} = Astro.props;
+---
+
+<div class="google-reviews">
+  {reviews.length > 0 && (
+    <div class="google-reviews__grid">
+      {reviews.map((review) => (
+        <article class="google-reviews__card">
+          <div
+            class="google-reviews__stars"
+            aria-label={`${review.rating} van 5 sterren`}
+          >
+            {Array.from({ length: 5 }, (_, i) =>
+              i < review.rating ? '★' : '☆'
+            ).join('')}
+          </div>
+
+          <blockquote>{review.text}</blockquote>
+
+          <p class="google-reviews__author">
+            {review.author}
+          </p>
+        </article>
+      ))}
+    </div>
+  )}
+
+  <a
+    class="google-reviews__link"
+    href={googleUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Bekijk onze reviews op Google ↗
+  </a>
+</div>
+
+<style lang="scss">
+  .google-reviews {
+    &__grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    &__card {
+      background: #ffffff;
+      border: 1px solid #e1e8ed;
+      border-radius: 14px;
+      padding: 2rem;
+
+      blockquote {
+        margin: 1rem 0 1.5rem;
+        color: #102a43;
+        line-height: 1.7;
+      }
+    }
+
+    &__stars {
+      color: #f47b20;
+      font-size: 1.35rem;
+      letter-spacing: 0.08em;
+    }
+
+    &__author {
+      color: #102a43;
+      font-weight: 700;
+    }
+
+    &__link {
+      display: inline-block;
+      color: #102a43;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+
+      &:hover {
+        color: #c4560b;
+      }
+    }
+
+    @media (max-width: 768px) {
+      &__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+</style>
